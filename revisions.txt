@@ -1,0 +1,5 @@
+commit 10fc5b8e617cd6f23c41ba50bea175cee6f816b3
+Author: Siddhi2631 <sp9914@rit.edu>
+Date:   Fri Feb 27 09:40:26 2026 -0500
+
+    Initial HW2: my_ping and my_traceroute
