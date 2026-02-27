@@ -1,3 +1,15 @@
+commit 2680473daf307d2d1fa7f8919f6ae147811e3e3e
+Author: Siddhi2631 <sp9914@rit.edu>
+Date:   Fri Feb 27 13:49:08 2026 -0500
+
+    Add final report PDF
+
+commit 9b2bde49dbc1024b1cdfe6d3108ea975b6dc2d33
+Author: Siddhi2631 <sp9914@rit.edu>
+Date:   Fri Feb 27 13:31:11 2026 -0500
+
+    Add Sphinx docs, documentation PDF, update README and revisions
+
 commit 0e021b3e829b8a073f1bfecf5869e4f38e7a3110
 Author: Siddhi2631 <sp9914@rit.edu>
 Date:   Fri Feb 27 10:06:37 2026 -0500
