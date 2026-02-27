@@ -10,13 +10,8 @@ env/
 # macOS
 .DS_Store
 
-# Sphinx build outputs
+# Sphinx
 docs/_build/
-docs/build/
 
-# PDFs / exports
-*.pdf
-
-# Misc
-*.log
-
+# PDFs (keep your required PDFs tracked if you want, remove this line if needed)
+# *.pdf

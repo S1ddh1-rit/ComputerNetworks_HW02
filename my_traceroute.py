@@ -12,7 +12,7 @@ Requires root/administrator privileges to use raw sockets.
 
 import argparse
 import socket
-import struct
+# import struct
 import time
 import select
 import sys
@@ -173,13 +173,11 @@ def traceroute(
                 addr, rtt = send_probe(recv_sock, dest_addr, ttl, port)
                 hop_results.append((addr, rtt))
 
-            # Build the output line for this hop
             _print_hop(ttl, hop_results, numeric, summary)
 
-            # Determine if we have reached the destination
             responding_addrs = [a for a, _ in hop_results if a is not None]
             if responding_addrs and dest_addr in responding_addrs:
-                break  # Reached the destination
+                break
 
     finally:
         recv_sock.close()
