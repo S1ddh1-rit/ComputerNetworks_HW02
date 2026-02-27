@@ -1,3 +1,15 @@
+commit 39e741a49ee3a0214fc4eacfc6594dc3e9438d81
+Author: Siddhi2631 <sp9914@rit.edu>
+Date:   Fri Feb 27 18:04:15 2026 -0500
+
+    Update report PDF with revised comparison and explanations
+
+commit 5b3e82e183acb7e2ffc37279554b15bd8f7cacc1
+Author: Siddhi2631 <sp9914@rit.edu>
+Date:   Fri Feb 27 13:49:59 2026 -0500
+
+    Update revisions.txt for final submission
+
 commit 2680473daf307d2d1fa7f8919f6ae147811e3e3e
 Author: Siddhi2631 <sp9914@rit.edu>
 Date:   Fri Feb 27 13:49:08 2026 -0500
