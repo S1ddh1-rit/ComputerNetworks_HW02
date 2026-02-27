@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Sphinx build outputs
+docs/_build/
+docs/build/
+
+# PDFs / exports
+*.pdf
+
+# Misc
+*.log
+

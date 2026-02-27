@@ -17,22 +17,15 @@ import time
 import select
 import sys
 
+MAX_HOPS = 30          # Maximum hops
+DEST_PORT = 33434      
+TIMEOUT = 3.0          # Timwout 
+DEFAULT_PROBES = 3
 
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-MAX_HOPS = 30          # Maximum number of hops before giving up
-DEST_PORT = 33434      # Starting UDP destination port (classic traceroute)
-TIMEOUT = 3.0          # Per-probe receive timeout in seconds
-DEFAULT_QUERIES = 3    # Default probes per TTL hop
-
-
-# ---------------------------------------------------------------------------
-# Checksum helper
-# ---------------------------------------------------------------------------
 
 def checksum(data: bytes) -> int:
     """Compute the Internet checksum (RFC 1071) over *data*.
+       Addition, if carry then wrap around then do 1's complement
 
     Args:
         data: Raw bytes to checksum.
@@ -54,10 +47,6 @@ def checksum(data: bytes) -> int:
 
     return ~total & 0xFFFF
 
-
-# ---------------------------------------------------------------------------
-# Socket helpers
-# ---------------------------------------------------------------------------
 
 def create_send_socket(ttl: int) -> socket.socket:
     """Create a UDP socket with the given TTL.
@@ -86,11 +75,6 @@ def create_recv_socket(timeout: float) -> socket.socket:
     sock.settimeout(timeout)
     return sock
 
-
-# ---------------------------------------------------------------------------
-# Hostname resolution
-# ---------------------------------------------------------------------------
-
 def resolve_hostname(addr: str) -> str:
     """Attempt a reverse DNS lookup for *addr*.
 
@@ -104,11 +88,6 @@ def resolve_hostname(addr: str) -> str:
         return socket.gethostbyaddr(addr)[0]
     except socket.herror:
         return addr
-
-
-# ---------------------------------------------------------------------------
-# Core probe function
-# ---------------------------------------------------------------------------
 
 def send_probe(
     recv_sock: socket.socket,
@@ -137,7 +116,6 @@ def send_probe(
     finally:
         send_sock.close()
 
-    # Wait for an ICMP reply
     ready = select.select([recv_sock], [], [], TIMEOUT)
     if not ready[0]:
         return None, None  # Timeout
@@ -151,15 +129,10 @@ def send_probe(
     rtt_ms = (recv_time - send_time) * 1000.0
     return addr[0], rtt_ms
 
-
-# ---------------------------------------------------------------------------
-# Traceroute main logic
-# ---------------------------------------------------------------------------
-
 def traceroute(
     destination: str,
     numeric: bool = False,
-    nqueries: int = DEFAULT_QUERIES,
+    nqueries: int = DEFAULT_PROBES,
     summary: bool = False,
 ) -> None:
     """Run traceroute to *destination* and print results.
@@ -211,11 +184,6 @@ def traceroute(
     finally:
         recv_sock.close()
 
-
-# ---------------------------------------------------------------------------
-# Output formatting
-# ---------------------------------------------------------------------------
-
 def _print_hop(
     ttl: int,
     results: list[tuple[str | None, float | None]],
@@ -233,14 +201,13 @@ def _print_hop(
     unanswered = sum(1 for addr, _ in results if addr is None)
     answered = [(addr, rtt) for addr, rtt in results if addr is not None]
 
-    # ---- Hop number -------------------------------------------------------
     line = f"{ttl:2d}  "
 
     if not answered:
-        # All probes timed out
+        # All probes unanswered
         line += "  ".join(["*"] * len(results))
     else:
-        # Show the first responding address (and optionally its hostname)
+        # Show the first responding router address
         first_addr = answered[0][0]
         if numeric:
             host_str = first_addr
@@ -254,7 +221,7 @@ def _print_hop(
 
         line += host_str + "  "
 
-        # RTT values (or '*' for timed-out probes)
+        # RTT values 
         rtt_parts: list[str] = []
         for addr, rtt in results:
             if rtt is None:
@@ -263,16 +230,11 @@ def _print_hop(
                 rtt_parts.append(f"{rtt:.3f} ms")
         line += "  ".join(rtt_parts)
 
-    # ---- Optional summary --------------------------------------------------
     if summary and unanswered > 0:
         line += f"  ({unanswered}/{len(results)} probes unanswered)"
 
     print(line)
 
-
-# ---------------------------------------------------------------------------
-# CLI entry point
-# ---------------------------------------------------------------------------
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments.
@@ -302,7 +264,7 @@ def parse_args() -> argparse.Namespace:
         "-q",
         dest="nqueries",
         type=int,
-        default=DEFAULT_QUERIES,
+        default=DEFAULT_PROBES,
         metavar="nqueries",
         help="Set the number of probes per TTL (default: %(default)s).",
     )
